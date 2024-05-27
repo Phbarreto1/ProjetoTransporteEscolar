@@ -22,7 +22,6 @@ contador_usuarios = 1
 
 usuarios = carregar_usuarios()
 
-
 cadastro = input('Já é cadastrado? [S/N]\n').upper()
 
 if cadastro == 'N':
