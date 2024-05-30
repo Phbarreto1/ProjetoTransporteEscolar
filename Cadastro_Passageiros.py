@@ -1,3 +1,8 @@
+import inquirer
+
+numaluno = 0
+BD_alunos = {}
+
 def solicitar_data_nasc():
     nasc_aluno = input("Digite a data de nascimento do aluno passageiro (00/00/0000): ")
     if len(nasc_aluno) == 10 and nasc_aluno[2] == '/' and nasc_aluno[5] == '/' and nasc_aluno[:2].isdigit() and nasc_aluno[3:5].isdigit() and nasc_aluno[6:].isdigit():
@@ -6,8 +11,51 @@ def solicitar_data_nasc():
         print("Data inválida. Por favor, use o formato 00/00/0000.")
         return solicitar_data_nasc()
 
+def menu_responsavel():
+    questions_menu_responsavel = [inquirer.List('Menu Responsável',message="Escolha a opção:",choices=['Marcar Ausência', 'Acessar GPS', 'Histórico de Rotas', 'Notificações e Comunicação','Controle de Pagamentos', 'Documentação', 'Cadastro de Passageiros', 'Ajuda', 'Sair'],),]
+    menu_responsavel = inquirer.prompt(questions_menu_responsavel)
 
-def cadastrar_aluno(BD_alunos, numaluno):
+    if menu_responsavel['Menu Responsável'] == 'Marcar Ausência':
+        print("Opção escolhida: Marcar Ausência")
+
+    elif menu_responsavel['Menu Responsável'] == 'Acessar GPS':
+        print("Opção escolhida: Marcar Ausência")
+
+    elif menu_responsavel['Menu Responsável'] == 'Histórico de Rotas':
+        print("Opção escolhida: Histórico de Rotas")
+
+    elif menu_responsavel['Menu Responsável'] == 'Notificações e Comunicação':
+        print("Opção escolhida: Notificações e Comunicação")
+
+    elif menu_responsavel['Menu Responsável'] == 'Controle de Pagamentos':
+        print("Opção escolhida: Controle de Pagamentos")
+
+    elif menu_responsavel['Menu Responsável'] == 'Documentação':
+        print("Opção escolhida: Documentação")
+
+    elif menu_responsavel['Menu Responsável'] == 'Cadastro de Passageiros':
+        print("Opção escolhida: Cadastro de Passageiros")
+
+    elif menu_responsavel['Menu Responsável'] == 'Ajuda':
+        print("Opção escolhida: Ajuda")
+
+    elif menu_responsavel['Menu Responsável'] == 'Sair':
+        print("Saindo...")
+
+def submenu_cadastro_passageiros():
+    questions_submenu_cadastro_passageiros = [inquirer.List('SubMenu Cadastro Passageiros',message="Escolha a opção:",choices=['Novo cadastro', 'Editar cadastro', 'Voltar ao menu principal'],),]
+    resposta_submenu_cadastro_passageiros = inquirer.prompt(questions_submenu_cadastro_passageiros)
+
+    if resposta_submenu_cadastro_passageiros['SubMenu Cadastro Passageiros'] == 'Novo cadastro':
+        cadastrar_passageiro(BD_alunos, numaluno)
+
+    elif resposta_submenu_cadastro_passageiros['SubMenu Cadastro Passageiros'] == 'Editar cadastro':
+        editar_passageiro(BD_alunos)
+
+    elif resposta_submenu_cadastro_passageiros['SubMenu Cadastro Passageiros'] == 'Voltar ao menu principal':
+        menu_responsavel()
+
+def cadastrar_passageiro(BD_alunos, numaluno):
     nome_aluno = input("Digite o nome completo do aluno passageiro: ")
     cpf_aluno = input("Digite o CPF do aluno passageiro: ")
     fone_aluno = input("Digite um contato telefônico do aluno passageiro: ")
@@ -20,7 +68,7 @@ def cadastrar_aluno(BD_alunos, numaluno):
     return numaluno
 
 
-def editar_aluno(BD_alunos):
+def editar_passageiro(BD_alunos):
     cod_aluno = int(input("Informe o código do aluno: "))
     if cod_aluno in BD_alunos:
         nome_aluno = input("Digite o nome completo do aluno passageiro: ")
@@ -34,55 +82,10 @@ def editar_aluno(BD_alunos):
     else:
         print("Código inválido. Verifique o código correto!")
 
-
-def menu_de_opcoes():
-    print("==MENU DE OPÇÕES==")
-    print("1. Marcar ausência")
-    print("2. Acessar GPS")
-    print("3. Histórico de Rotas")
-    print("4. Notificação e Comunicação")
-    print("5. Controle de Pagamento")
-    print("6. Notificações")
-    print("7. Cadastro de Passageiros")
-    print("8. Ajuda")
-    print("9. Sair")
-
-
 def Iniciar():
     print('===========ÁREA DOS RESPONSÁVEIS===========')
-    numaluno = 0
-    BD_alunos = {}
-
-    while True:
-        resposta = input("Deseja realizar alguma ação? Sim ou Não: ")
-        if resposta.lower() == "sim":
-            while True:
-                menu_de_opcoes()
-                try:
-                    opcao = int(input("Digite o número da opção escolhida: "))
-                    if opcao == 7:
-                        while True:
-                            resposta7 = int(input("Gostaria de cadastrar um passageiro (1), editar um existente (2) ou voltar ao Menu de Opções (3)? 1, 2 ou 3?: "))
-                            if resposta7 == 1:
-                                numaluno = cadastrar_aluno(BD_alunos, numaluno)
-                            elif resposta7 == 2:
-                                editar_aluno(BD_alunos)
-                            elif resposta7 == 3:
-                                break
-                            else:
-                                print("Opção inválida. Tente novamente.")
-                    elif opcao == 9:
-                        print("Saindo...Programa finalizado.")
-                        return  # Adicione esta linha para sair do loop e da função main
-                    else:
-                        print("Opção inválida. Tente novamente.")
-                except ValueError:
-                    print("Entrada inválida. Por favor, digite um número.")
-        elif resposta.lower() == "não":
-            print("Saindo...Programa finalizado.")
-            break
-        else:
-            print("Resposta inválida. Por favor, responda com 'Sim' ou 'Não'.")
+    menu_responsavel()
+    submenu_cadastro_passageiros()
 
 Iniciar()
 
