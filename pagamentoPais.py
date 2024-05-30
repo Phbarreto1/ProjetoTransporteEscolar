@@ -25,5 +25,4 @@ while True:
         print("Suporte")
     elif pagamento == 6:
         break
-    else:
-        print("Opção inválida")
+    
