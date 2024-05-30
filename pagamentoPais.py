@@ -12,18 +12,21 @@
 '''
 pagamento = 0
 while True:
-    pagamento = int(input("Opcão de pagamento: "))
+    print("\n1: Sim \n2: Não \n3: Suporte \n4: Menu")
+    pagamento = int(input("\nJá fez seu pagamento? "))
     if pagamento == 1:
-        print("Histórico de pagamento \nFevereiro - Pago \nMarço - Pago \nAbril - Pago \nMaio - Pago \nJunho - Aguardando pagamento")
+        print("Sim")
     elif pagamento == 2:
-        print("Transferência bancária")
+        print("Não")
+        gerar_boleto = int(input("Deseja gerar o boleto? (1: Sim)"))
+        if gerar_boleto == 1:
+            print("Gerando boleto")
+        else:
+            break
     elif pagamento == 3:
-        print("Pix")
-    elif pagamento == 4:
-        print("Boleto")
-    elif pagamento == 5:
         print("Suporte")
-    elif pagamento == 6:
+    elif pagamento == 4:
+        print("Voltando para o menu")
         break
     else:
         print("Opção inválida")
