@@ -30,11 +30,11 @@ def menu_responsavel():
         print(
 	"AJUDA - MENU RESPONSÁVEL\n"
 	"Bem-vindo ao Menu de Ajuda! Aqui você encontrará uma explicação detalhada de cada opção disponível no Menu Responsável:\n"
-	"1.Marcar Ausência: Use esta opção para informar ao serviço de transporte que seu filho estará ausente em um determinado dia.Isso ajuda a evitar esperas desnecessárias e aplanejar melhor a rota.\n"
-	"2.Acessar GPS:Esta funcionalidade permite que você visualize a localização em tempo real do transporte escolar. Assim, você pode acompanhar o trajeto e saber exatamente onde está o veículo.\n"
+	"1.Marcar Ausência: Use esta opção para informar ao serviço de transporte que seu filho estará ausente em um determinado dia.Isso ajuda a evitar esperas desnecessárias e a planejar melhor a rota.\n"
+	"2.Acessar GPS: Esta funcionalidade permite que você visualize a localização em tempo real do transporte escolar. Assim, você pode acompanhar o trajeto e saber exatamente onde está o veículo.\n"
 	"3.Histórico de Rotas: Aqui você pode acessar o histórico completo das rotas percorridas pelo transporte escolar. Isso inclui datas, horários e o trajeto realizado, proporcionando maior transparência e segurança.\n"
-	"4.Notificações e Comunicação: Nesta seção, você encontrará todas as notificações importantes enviadas pelo serviço de transporte ou pela escola. Também é possível enviar e receber mensagens diretamente, facilitando a comunicação entre responsáveis e prestadores de serviço.\n"
-	"5.Controle de Pagamentos: Mantenha seu controle financeiro em dia com esta funcionalidade. Verifique os pagamentos realizados, datas de vencimento e detalhes de transações, além de acessar boletos ou faturas pendentes.\n"
+	"4.Notificações e Comunicação: Nesta seção, você encontrará todas as notificações importantes enviadas pelo serviço de transporte. Também é possível enviar e receber mensagens diretamente, facilitando a comunicação entre responsáveis e prestadores de serviço.\n"
+	"5.Controle de Pagamentos: Mantenha seu controle financeiro em dia com esta funcionalidade. Verifique os pagamentos realizados, datas de vencimento e detalhes de transações, além de acessar os pagamentos pendentes.\n"
 	"6.Documentação: Aqui você pode acessar e enviar documentos importantes relacionados ao serviço de transporte, como autorização de viagem, atestados médicos e outras documentações necessárias para garantir a segurança e o bem-estar dos passageiros.\n"
 	"7.Cadastro de Passageiros: Mantenha os dados dos passageiros sempre atualizados. Nesta seção, você pode adicionar, editar ou remover informações sobre os passageiros, garantindo que todos os detalhes estejam corretos e atualizados.\n"
 	"8.Ajuda: Esta opção leva você ao menu de ajuda, onde você pode encontrar informações detalhadas sobre o uso de todas as funcionalidades do aplicativo, além de dicas e suporte para resolver eventuais problemas.\n"
@@ -48,3 +48,4 @@ def Iniciar():
     menu_responsavel()
 
 Iniciar()
+
