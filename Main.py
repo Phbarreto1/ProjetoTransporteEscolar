@@ -6,6 +6,10 @@ from datetime import date
 os.system("clear")
 
 usuarios_sistema = 'usuarios.json'
+lista_mensagens_enviadas = [] # armazenar as notificações enviadas pelo motorista
+passageiros = []
+num_aluno = 0
+BD_alunos = {}
 
 def carregar_usuarios():
     if os.path.exists(usuarios_sistema):
@@ -17,92 +21,479 @@ def carregar_usuarios():
 def salvar_usuarios(usuarios):
     with open(usuarios_sistema, 'w') as file:
         json.dump(usuarios, file)
+    
+
+def cadastrar_passageiro(BD_alunos, num_aluno):
+    nome_aluno = input("Digite o nome completo do aluno passageiro:\n")
+    data_nasc_aluno = input('Digite sua data de nascimento (AAAA-MM-DD):\n')
+    while True:
+        try:
+            nascimento_aluno = date.fromisoformat(data_nasc_aluno)
+            break
+        except ValueError:
+            print('Data de nascimento inválida. Digite a data no formato AAAA-MM-DD.')
+            continue
+    cpf_aluno = input("Digite o CPF do aluno passageiro:\n")
+    fone_aluno = input("Digite um contato telefônico do aluno passageiro:\n")
+    endereco_residencia_aluno = input("Digite o endereço completo da residência do aluno passageiro:\n")
+    escola = input("Digite o nome da escola do aluno passageiro:\n")
+    endereco_escola = input("Digite o endereço completo da escola:\n")
+    turno = [
+        inquirer.List('Turno',
+                    message = "Selecione o turno do passageiro:",
+                    choices = ['Manhã', 'Tarde', 'Noite']  
+                    ),
+    ]
+    turno_escolhido = inquirer.prompt(turno)['Turno']
+
+    num_aluno = len(passageiros) + 1
+    passageiro = {'nome': nome_aluno, 'nascimento': data_nasc_aluno, 'codigo': num_aluno, 'turno': turno_escolhido}
+    passageiros.append(passageiro)
+    BD_alunos[num_aluno] = (nome_aluno, nascimento_aluno, cpf_aluno, fone_aluno, endereco_residencia_aluno, escola, endereco_escola)
+    print(f"Aluno {nome_aluno} cadastrado com sucesso! O código do aluno é {num_aluno}. Salve este código para posterior consulta")
+    return num_aluno
+
+
+def visualizar_passageiros(turno=None):
+    if turno:
+        passageiros_filtrados = [p for p in passageiros if p['turno'] == turno]
+        if not passageiros_filtrados:
+            print(f'Nenhum passageiro cadastrado para o turno {turno}.')
+            return
+    else:
+        passageiros_filtrados = passageiros
+        if not passageiros_filtrados:
+            print('Nenhum passageiro cadastrado.')
+            return
+
+    while True:
+        print('Lista de Passageiros:')
+        for passageiro in passageiros_filtrados:
+            print(f"Código: {passageiro['codigo']} - Nome: {passageiro['nome']}")
+
+        selecionar_passageiro = [
+            inquirer.List('Passageiro',
+                        message = "Selecione um passageiro para incluir na rota:",
+                        choices = [f"{p['codigo']} - {p['nome']}" for p in passageiros_filtrados] + ['Voltar ao Menu'],
+                        ),
+        ]
+        resposta_passageiro = inquirer.prompt(selecionar_passageiro)
+
+        if resposta_passageiro['Passageiro'] == 'Voltar ao Menu':
+            break
+
+        codigo_selecionado = int(resposta_passageiro['Passageiro'].split(' ')[0])
+        passageiro_selecionado = next(p for p in passageiros_filtrados if p['codigo'] == codigo_selecionado)
+        print(f"Passageiro {passageiro_selecionado['nome']} selecionado para a rota.")
+
+
+def editar_passageiro(BD_alunos):
+    cod_aluno = int(input("Informe o código do aluno: "))
+    if cod_aluno in BD_alunos:
+        nome_aluno = input("Digite o nome completo do aluno passageiro: ")
+        cpf_aluno = input("Digite o CPF do aluno passageiro: ")
+        fone_aluno = input("Digite um contato telefônico do aluno passageiro: ")
+        endereco_residencia_aluno = input("Digite o endereço completo da residência do aluno passageiro: ")
+        escola = input("Digite o nome da escola do aluno passageiro: ")
+        endereco_escola = input("Digite o endereço completo da escola: ")
+        BD_alunos[cod_aluno] = (nome_aluno, cpf_aluno, fone_aluno, endereco_residencia_aluno, escola, endereco_escola)
+        print(f"Aluno {nome_aluno} com código {cod_aluno} editado com sucesso!")
+    else:
+        print("Código inválido. Verifique o código correto!")
+
+
+def voltar_ao_menu():
+    pergunta_voltar_menu = [
+            inquirer.List('Voltar',
+                        message = "Voltar ao menu?",
+                        choices = ['Sim', 'Não'],  
+                        ),       
+    ]
+    resposta_voltar_menu = inquirer.prompt(pergunta_voltar_menu)
+    return resposta_voltar_menu['Voltar'] == 'Sim'
 
 
 def menu_motorista():
-    questions_menu_motorista = [
-            inquirer.List('Menu Motorista',
-                        message = "Escolha a opção:",
-                        choices = ['Lista de Passageiros', 'Acessar Rotas', 'Comunicação', 'Histórico de Rotas', 'Controle de Pagamentos', 'Documentação', 'Ajuda', 'Sair'],
-                        ),
-    ]
-    menu_motorista = inquirer.prompt(questions_menu_motorista)
-    
-    if menu_motorista['Menu Motorista'] == 'Lista de Passageiros':
-        print("Opção escolhida: Lista de Passageiros")
+    cnh = None
+    doc_veiculo = None
 
-    elif menu_motorista['Menu Motorista'] == 'Acessar Rotas':
-        questions = [
-            inquirer.List('Rota',
-                    message="Qual rota você quer acessar?",
-                    choices=['Manhã', 'Tarde', 'Noite','Voltar ao Menu Anterior'],
-                    ),
+    while True:
+        questions_menu_motorista = [
+                inquirer.List('Menu Motorista',
+                            message = "Escolha a opção:",
+                            choices = ['Lista de Passageiros', 'Acessar Rotas', 'Comunicação', 'Histórico de Rotas', 'Controle de Pagamentos', 'Documentação', 'Ajuda', 'Sair'],
+                            ),
         ]
-        rota = inquirer.prompt(questions)
-        if rota['Rota'] == 'Manhã':
-            rota_gps = get_rota_manha()
-            print('Visualizar GPS: ', rota_gps)
-        if rota['Rota'] == 'Tarde':
-            rota_gps = get_rota_tarde()
-            print('Visualizar GPS: ', rota_gps)
-        if rota['Rota'] == 'Noite':
-            rota_gps = get_rota_noite()
-            print('Visualizar GPS: ', rota_gps)
+        menu_motorista = inquirer.prompt(questions_menu_motorista)
+        
+        if menu_motorista['Menu Motorista'] == 'Lista de Passageiros':
+            visualizar_passageiros()
+            voltar_ao_menu()    
 
-    elif menu_motorista['Menu Motorista'] == 'Comunicação':
-        print("Opção escolhida: Comunicação")
+        elif menu_motorista['Menu Motorista'] == 'Acessar Rotas':
+            pergunta_acesso_rota = [
+                inquirer.List('Rota',
+                            message = "Qual rota você quer acessar?",
+                            choices =['Manhã', 'Tarde', 'Noite', 'Voltar ao Menu Anterior'],
+                            ),
+            ]
+            rota = inquirer.prompt(pergunta_acesso_rota)
 
-    elif menu_motorista['Menu Motorista'] == 'Histórico de Rotas':
-        print("Opção escolhida: Histórico de Rotas")
+            if rota['Rota'] == 'Manhã':
+                visualizar_passageiros('Manhã')
+            if rota['Rota'] == 'Tarde':
+                visualizar_passageiros('Tarde')
+            if rota['Rota'] == 'Noite':
+                visualizar_passageiros('Noite')
 
-    elif menu_motorista['Menu Motorista'] == 'Controle de Pagamentos':
-        print("Opção escolhida: Controle de Pagamentos")
+            if voltar_ao_menu():
+                break
+            
+        elif menu_motorista['Menu Motorista'] == 'Comunicação':
+            while True:
+                mensagens_motorista = [
+                        inquirer.List('Mensagens Motorista',
+                                    message = "Escolha a opção:",
+                                    choices = ['Chegando em 10 minutos', 'Chegando em 5 minutos', 'Estou aqui', 'O aluno foi entregue à escola', 'O aluno está voltando para casa',
+                                               'Houve um problema com o transporte', 'Personalizar mensagem', '']    
+                                    ),                   
+                ]
+                mensagem = inquirer.prompt(mensagens_motorista)
 
-    elif menu_motorista['Menu Motorista'] == 'Documentação':
-        print("Opção escolhida: Documentação")
+                if mensagem['Mensagens Motorista'] == 'Chegando em 10 minutos':
+                    print('Chegando em 10 minutos')
+                    mensagem_enviada = 'Chegando em 10 minutos'
+                elif mensagem['Mensagens Motorista'] == 'Chegando em 5 minutos':
+                    print('Chegando em 5 minutos')
+                    mensagem_enviada = 'Chegando em 5 minutos'
+                elif mensagem['Mensagens Motorista'] == 'Estou aqui':
+                    print('Estou aqui')
+                    mensagem_enviada = 'Estou aqui'
+                elif mensagem['Mensagens Motorista'] == 'O aluno foi entregue à escola':
+                    print('O aluno foi entregue à escola')
+                    mensagem_enviada = 'O aluno foi entregue à escola'
+                elif mensagem['Mensagens Motorista'] == 'O aluno está voltando para casa':
+                    print('O aluno está voltando para casa')
+                    mensagem_enviada = 'O aluno está voltando para casa'
+                elif mensagem['Mensagens Motorista'] == 'Houve um problema com o transporte':
+                    print('Houve um problema com o transporte')
+                    mensagem_enviada = 'Houve um problema com o transporte'
+                elif mensagem['Mensagens Motorista'] == 'Personalizar mensagem':
+                    mensagem_enviada = input('Escreva a mensagem que deseja enviar: \n')
+            
+                lista_mensagens_enviadas.append(mensagem_enviada)
+                print('Mensagem Enviada!')
 
-    elif menu_motorista['Menu Motorista'] == 'Ajuda':
-        print("Opção escolhida: Ajuda")
+                if voltar_ao_menu():
+                    break
 
-    elif menu_motorista['Menu Motorista'] == 'Sair':
-        print("Saindo...")  
+        elif menu_motorista['Menu Motorista'] == 'Histórico de Rotas':
+            while True:
+                    historico = input('Gostaria de visualizar uma rota realizada? [S/N]\n').upper()
+                    if historico == 'S':
+                        historico_de_rotas_str = input('Escolha a data da rota que deseja visualizar (AAAA-MM-DD):\n')
+                        historico_rota = date.fromisoformat(historico_de_rotas_str)
+                        print(f'Visualizando a rota do GPS no dia: {historico_rota}')
+                    else:
+                        break
+            
+            if voltar_ao_menu():
+                break
+
+        elif menu_motorista['Menu Motorista'] == 'Controle de Pagamentos':
+            suporte__pagamentos_motorista = input('Envie para nós o seu problema que iremos entrar em contato para resolvê-lo.\n')
+            
+            if voltar_ao_menu():
+                break
+                        
+        elif menu_motorista['Menu Motorista'] == 'Documentação':
+            perguntas_documentacao_motorista = [
+                inquirer.List('Escolher Documentações',
+                            message = "Selecionar qual o tipo de documentação:",
+                            choices = ['Motorista', 'Veículo', 'Voltar ao menu'],
+                            ),
+            ]
+            documentacao = inquirer.prompt(perguntas_documentacao_motorista)
+
+            if documentacao['Escolher Documentações'] == 'Motorista':
+                while True:
+                    menu_motorista = [
+                        inquirer.List('Motorista',
+                                    message = "Selecione a documentação:",
+                                    choices = ['Editar documento', 'Visualizar documento', 'Voltar ao menu'],
+                                    ),
+                    ]
+                    documentacao_motorista = inquirer.prompt(menu_motorista)
+
+                    if documentacao_motorista['Motorista'] == 'Editar Documento':
+                        numero_registro_cnh = input('Editar documento (CNH): ')
+                    elif documentacao_motorista['Motorista'] == 'Visualizar Documento':
+                        if numero_registro_cnh:
+                            print(f'Esta é sua CNH Atual: {numero_registro_cnh}')
+                        else:
+                            print('Nenhum documento encontrado.')
+                    elif documentacao_motorista['Motorista']  == 'Voltar ao menu':
+                        break
+                    if voltar_ao_menu():
+                        break
+               
+            elif documentacao['Escolher Documentações'] == 'Veículo':
+                while True:
+                    menu_veiculo = [
+                        inquirer.List('Veículo',
+                                    message = "Selecione a documentação:",
+                                    choices = ['Inserir documento do veículo', 'Editar documento', 'Visualizar documento', 'Voltar ao menu'],
+                                    ),
+                    ]
+                    documentacao_veiculo = inquirer.prompt(menu_veiculo)
+
+                    if documentacao_veiculo['Veículo'] == 'Inserir Documento do Veículo':
+                        doc_veiculo = input('Inserir documento (Veículo): ')                   
+                    elif documentacao_veiculo['Veículo'] == 'Editar Documento':
+                        doc_veiculo = input('Inserir novo documento (Veículo): ')                   
+                    elif documentacao_veiculo['Veículo'] == 'Visualizar Documento':
+                        if doc_veiculo:
+                            print(f'Este é o Documento Atual do Veículo: {doc_veiculo}')
+                        else:
+                            print('Nenhum documento encontrado.')
+                    elif documentacao_veiculo['Veículo'] == 'Voltar ao menu':
+                        break
+                    if voltar_ao_menu():
+                        break
+            
+            elif documentacao['Escolher Documentações'] == 'Voltar ao menu':
+                break
+
+        elif menu_motorista['Menu Motorista'] == 'Ajuda':
+            perguntas_menu_ajuda_motorista = [
+                    inquirer.List('Menu Ajuda',
+                                message = "Escolha a opção:",
+                                choices = ['Sobre o menu', 'Denúncia', 'Falar com o suporte', 'Voltar ao menu'],  
+                                ),
+            ]
+            resposta_ajuda_motorista = inquirer.prompt(perguntas_menu_ajuda_motorista)
+
+            if resposta_ajuda_motorista['Menu Ajuda'] == 'Sobre o menu':
+                print(
+                "Bem-vindo ao Menu de Ajuda! Aqui você encontrará uma explicação detalhada de cada opção disponível no Menu do Motorista:\n"
+                "1. Lista de Passageiros: Nessa opção você irá definir as rotas selecionando os passageiros específicos de cada turno.\n"
+                "2. Acessar Rotas: Opção do menu para acessar as rotas definidas anteriormente. Ao selecionar uma rota salva, o GPS mostrará o percurso a ser realizado.\n"
+                "3. Histórico de Rotas: Aqui você pode acessar o histórico completo das rotas percorridas pelo transporte escolar. Isso inclui datas, horários e o trajeto realizado, proporcionando maior transparência e segurança.\n"
+                "4. Controle de Pagamentos:.\n"
+                "5. Documentação:.\n"
+                "6. Ajuda: Esta opção leva você ao menu de ajuda, onde você pode encontrar informações detalhadas sobre o uso de todas as funcionalidades do aplicativo, além de dicas e suporte para resolver eventuais problemas.\n"
+                "7. Sair: Use esta opção para sair da sua conta de forma segura. Certifique-se de que todas as suas informações estão salvas antes de sair.\n")
+                
+
+            elif resposta_ajuda_motorista['Menu Ajuda'] == 'Denúncia':
+                denuncia_motorista = input('Gostaria de fazer uma denúncia? Explique-nos abaixo o problema ocorrido:\n')
+                print('Denúncia enviada! Aguarde um momento, logo entraremos em contato...')
+
+            elif resposta_ajuda_motorista['Menu Ajuda'] == 'Falar com o suporte':
+                suporte_motorista = input('Informe-nos o problema e o nosso suporte entrará em contato!')
+                print('Mensagem enviada!')
+
+            if voltar_ao_menu():
+                break
+
+        elif menu_motorista['Menu Motorista'] == 'Sair':
+            print("Saindo...")
+            break
 
 
 def menu_responsavel():
-    questions_menu_responsavel = [
-            inquirer.List('Menu Responsável',
-                        message="Escolha a opção:",
-                        choices=['Marcar Ausência', 'Acessar GPS', 'Histórico de Rotas', 'Notificações e Comunicação','Controle de Pagamentos', 'Documentação', 'Cadastro de Passageiros', 'Ajuda', 'Sair'],
-                        ),
-    ]       
-    menu_responsavel = inquirer.prompt(questions_menu_responsavel)
+    while True:
+        perguntas_menu_responsavel = [
+                inquirer.List('Menu Responsável',
+                            message = "Escolha a opção:",
+                            choices = ['Marcar Ausência', 'Acessar GPS', 'Histórico de Rotas', 'Notificações e Comunicação','Controle de Pagamentos', 'Documentação', 'Cadastro de Passageiros', 'Ajuda', 'Sair'],
+                            ),
+        ]       
+        menu_responsavel = inquirer.prompt(perguntas_menu_responsavel)
 
-    if menu_responsavel['Menu Responsável'] == 'Marcar Ausência':
-        print("Opção escolhida: Marcar Ausência")
+        if menu_responsavel['Menu Responsável'] == 'Marcar Ausência':
+            
+            def receber_filhos():
+                return['Maria', 'João']
+            
+            menu_responsavel = 1
 
-    elif menu_responsavel['Menu Responsável'] == 'Acessar GPS':
-        print("Opção escolhida: Marcar Ausência")
+            while menu_responsavel == 1:
+                ausencia = [
+                        inquirer.List('Ausências',
+                                    message = "Selecionar qual horário não será necessário",
+                                    choices = ['Manhã', 'Tarde', 'Noite', 'Voltar ao Menu Anterior'],
+                                    ),
+                ]
+                turno_ausencia = inquirer.prompt(ausencia)
 
-    elif menu_responsavel['Menu Responsável'] == 'Histórico de Rotas':
-        print("Opção escolhida: Histórico de Rotas")
+                filhos = receber_filhos()
+                qtd_filhos = len(filhos)
 
-    elif menu_responsavel['Menu Responsável'] == 'Notificações e Comunicação':
-        print("Opção escolhida: Notificações e Comunicação")
+                if qtd_filhos >1:
+                    filho = [
+                            inquirer.List('Filho',
+                                        message = "Selecionar qual o filho",
+                                        choice = filhos 
+                                        ),
+                    ]
+                    filho_ausencia = inquirer.prompt(filho)
 
-    elif menu_responsavel['Menu Responsável'] == 'Controle de Pagamentos':
-        print("Opção escolhida: Controle de Pagamentos")
+                    print("Filho para ausencia: ", filho_ausencia['Filho'])
+                    print("Turno: ", turno_ausencia["Ausências"])
 
-    elif menu_responsavel['Menu Responsável'] == 'Documentação':
-        print("Opção escolhida: Documentação")
+            if voltar_ao_menu():
+                break
 
-    elif menu_responsavel['Menu Responsável'] == 'Cadastro de Passageiros':
-        print("Opção escolhida: Cadastro de Passageiros")
+        elif menu_responsavel['Menu Responsável'] == 'Acessar GPS':
+            pergunta_acesso_gps = [
+                    inquirer.List('Perguntas Acesso GPS',
+                                message = "Deseja visualizar a localização em tempo real?",  
+                                choices = ['Sim', 'Não'],
+                                )
+            ]
+            resposta_acesso_gps = inquirer.promp(pergunta_acesso_gps)
 
-    elif menu_responsavel['Menu Responsável'] == 'Ajuda':
-        print("Opção escolhida: Ajuda")
+            if resposta_acesso_gps ['Perguntas Acesso GPS'] == 'Sim':
+                print('>>> Visualizando localização em tempo real do veículo <<<')
 
-    elif menu_responsavel['Menu Responsável'] == 'Sair':
-        print("Saindo...")
+            if voltar_ao_menu():
+                break
+
+        elif menu_responsavel['Menu Responsável'] == 'Histórico de Rotas':
+            while True:
+                historico = input('Gostaria de visualizar uma rota realizada anteriormente? [S/N]\n').upper()
+                if historico == 'S':
+                    historico_de_rotas_str = input('Escolha a data da rota que deseja visualizar (AAAA-MM-DD):\n')
+                    try:
+                        historico_rota = date.fromisoformat(historico_de_rotas_str)
+                        print(f'Visualizando a rota do GPS no dia: {historico_rota}')
+                    except ValueError:
+                        print('Data inválida. Digite no formato AAAA-MM-DD')
+                else:
+                    break
+
+                
+                if voltar_ao_menu():
+                    break
+
+        elif menu_responsavel['Menu Responsável'] == 'Notificações e Comunicação':
+            print("Visualizando chat com o motorista...")
+            notificacoes = ['Notificação 1', 'Notificação 2', 'Notificação 3']
+            for notificacao in notificacoes:
+                print(notificacao)
+
+            enviar_mensagem = [
+                inquirer.List('Enviar Mensagem',
+                            message = "Deseja enviar uma mensagem?",  
+                            choices = ['Sim', 'Não'] 
+                            ),
+            ]
+            resposta_chat = inquirer.prompt(enviar_mensagem)
+
+            if resposta_chat['Enviar Mensagem'] == 'Sim':
+                mensagem_personalizada = input('Escreva a mensagem que deseja enviar: ')
+                print(f'Mensagem enviada: "{mensagem_personalizada}"')
+
+            if voltar_ao_menu():
+                break
+
+        elif menu_responsavel['Menu Responsável'] == 'Controle de Pagamentos':
+            while True:
+                pagamento_responsavel = [
+                        inquirer.List('Pagamentos Menu Responsável',
+                                    message = "Escolha a opção",
+                                    choices = ['Baixar boleto', 'Alterar data de vencimento', 'Suporte', 'Voltar ao menu']
+                                    ),
+                ]
+                resposta_pagamento = inquirer.prompt(pagamento_responsavel)
+
+                if resposta_pagamento['Pagamentos Menu Responsável'] == 'Baixar Boleto':
+                    print('Baixando boleto...')
+                    print('boleto_mensalidade.pdf')
+                elif resposta_pagamento['Pagamentos Menu Responsável'] == 'Alterar data de vencimento':
+                    data_vencimento = int(input('Gostaria de alterar o vencimento para o dia 05, 10, 15, 20 ou 25?\n'))
+                    print(f'Vencimento alterado para o dia {data_vencimento}!')
+                elif resposta_pagamento['Pagamentos Menu Responsável'] == 'Suporte':
+                    suporte_pagamentos_responsavel = input('Envie para nós o seu problema que iremos entrar em contato para resolvê-lo.\n')
+                elif resposta_pagamento['Pagamentos Menu Responsável'] == 'Voltar ao menu':
+                    break
+
+        elif menu_responsavel['Menu Responsável'] == 'Documentação':
+            perguntas_documentacao_responsavel = [
+                inquirer.List('Escolher Documentações',
+                            message = "Selecionar qual o tipo de documentação:",
+                            choices = ['Motorista', 'Veículo', 'Voltar ao menu'],
+                            ),
+            ]
+            documentacao_responsavel = inquirer.prompt(perguntas_documentacao_responsavel)
+
+            if documentacao_responsavel['Escolher Documentações'] == 'Motorista':
+                print(f'CNH do motorista {numero_registro_cnh}')
+                if voltar_ao_menu():
+                    break
+            elif documentacao_responsavel['Escolher Documentações'] == 'Veículo':
+                print(f'O documento do veículo {renavam_veiculo}')
+                if voltar_ao_menu():
+                    break
+            else:
+                if voltar_ao_menu():
+                    break
+
+        elif menu_responsavel['Menu Responsável'] == 'Cadastro de Passageiros':
+            pergunta_cadastrar_passageiros = [
+                    inquirer.List('SubMenu Cadastro de Passageiros',
+                                message = "Escolha a opção:",  
+                                choices = ['Novo cadastro', 'Editar cadastro', 'Voltar ao menu']  
+                                ),
+            ]
+            resposta_cadastrar_passageiros = inquirer.prompt(pergunta_cadastrar_passageiros)
+
+            if resposta_cadastrar_passageiros['Submenu Cadastro de Passageiros'] == 'Novo cadastro':
+                cadastrar_passageiro(BD_alunos, num_aluno)
+            
+            elif resposta_cadastrar_passageiros['SubMenu Cadastro de Passageiros'] == 'Editar cadastro':
+                editar_passageiro(BD_alunos)
+
+            if voltar_ao_menu():
+                break
+
+        elif menu_responsavel['Menu Responsável'] == 'Ajuda':
+            perguntas_menu_ajuda_responsavel = [
+                    inquirer.List('Menu Ajuda',
+                                message = "Escolha a opção:",
+                                choices = ['Sobre o menu', 'Denúncia', 'Falar com o suporte', 'Voltar ao menu'],  
+                                ),
+            ]
+            resposta_ajuda_responsavel = inquirer.prompt(perguntas_menu_ajuda_responsavel)
+
+            if resposta_ajuda_responsavel['Menu Ajuda'] == 'Sobre o menu':
+                print(
+                "Bem-vindo ao Menu de Ajuda! Aqui você encontrará uma explicação detalhada de cada opção disponível no Menu do Responsável:\n"
+                "1. Marcar Ausência: Use esta opção para informar ao serviço de transporte que seu filho estará ausente em um determinado dia. Isso ajuda a evitar esperas desnecessárias e a planejar melhor a rota.\n"
+                "2. Acessar GPS: Esta funcionalidade permite que você visualize a localização em tempo real do transporte escolar. Assim, você pode acompanhar o trajeto e saber exatamente onde está o veículo.\n"
+                "3. Histórico de Rotas: Aqui você pode acessar o histórico completo das rotas percorridas pelo transporte escolar. Isso inclui datas, horários e o trajeto realizado, proporcionando maior transparência e segurança.\n"
+                "4. Notificações e Comunicação: Nesta seção, você encontrará todas as notificações importantes enviadas pelo serviço de transporte. Também é possível enviar e receber mensagens diretamente, facilitando a comunicação entre responsáveis e prestadores de serviço.\n"
+                "5. Controle de Pagamentos: Mantenha seu controle financeiro em dia com esta funcionalidade. Verifique datas de vencimento e detalhes de transações, além de acessar os pagamentos pendentes.\n"
+                "6. Documentação: Aqui você pode acessar e enviar documentos importantes relacionados ao serviço de transporte, como autorização de viagem, atestados médicos e outras documentações necessárias para garantir a segurança e o bem-estar dos passageiros.\n"
+                "7. Cadastro de Passageiros: Mantenha os dados dos passageiros sempre atualizados. Nesta seção, você pode adicionar, editar ou remover informações sobre os passageiros, garantindo que todos os detalhes estejam corretos e atualizados.\n"
+                "8. Ajuda: Esta opção leva você ao menu de ajuda, onde você pode encontrar informações detalhadas sobre o uso de todas as funcionalidades do aplicativo, além de dicas e suporte para resolver eventuais problemas.\n"
+                "9. Sair: Use esta opção para sair da sua conta de forma segura. Certifique-se de que todas as suas informações estão salvas antes de sair.\n")
+
+            elif resposta_ajuda_responsavel['Menu Ajuda'] == 'Denúncia':
+                denuncia_responsavel = input('Gostaria de fazer uma denúncia? Explique-nos abaixo o problema ocorrido:\n')
+                print('Denúncia enviada! Aguarde um momento, logo entraremos em contato...')
+
+            elif resposta_ajuda_responsavel['Menu Ajuda'] == 'Falar com o suporte':
+                suporte_responsavel = input('Informe-nos o problema e o nosso suporte entrará em contato!')
+                print('Mensagem enviada!')
+
+            if voltar_ao_menu():
+                break
+
+        elif menu_responsavel['Menu Responsável'] == 'Sair':
+            print("Saindo...")
+            break
 
 
 def login():
@@ -202,6 +593,7 @@ if resposta_login['Tela Inicial'] == 'Não, seguir para o Cadastro':
                 continue
 
         cpf_responsavel = input('Digite o seu CPF (apenas os números):\n')
+        endereco_responsavel = input('Digite o seu endereço:\n')
         email_responsavel = input('Digite o seu email:\n')
         telefone_responsavel = input('Digite o seu telefone:\n')
         senha_responsavel = input('Crie uma senha: ')
@@ -216,6 +608,7 @@ if resposta_login['Tela Inicial'] == 'Não, seguir para o Cadastro':
             'telefone': telefone_responsavel,
             'senha': senha_responsavel,
             'codigo': codigo_responsavel,
+            'endereço': endereco_responsavel,
             'tipo': 'responsavel'
             }
 
