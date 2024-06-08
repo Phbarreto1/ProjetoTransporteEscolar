@@ -646,5 +646,4 @@ if resposta_login['Tela Inicial'] == 'Não, seguir para o Cadastro':
         print(f'Responsável cadastrado! Código do usuário: {codigo_responsavel}')
         login()
 else:
-
     login()
