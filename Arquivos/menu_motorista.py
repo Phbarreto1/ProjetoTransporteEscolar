@@ -56,6 +56,3 @@ elif menu_motorista['Menu Motorista'] == 'Ajuda':
 
 elif menu_motorista['Menu Motorista'] == 'Sair':
     print("Saindo...")
-
-else:
-    print('Número Inválido')

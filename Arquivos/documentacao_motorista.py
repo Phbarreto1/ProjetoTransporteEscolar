@@ -28,16 +28,16 @@ while menu_motorista == 6:
         documentacao_motorista = inquirer.prompt(menu_motorista)
         if documentacao_motorista['Motorista'] == "Inserir documento (CNH)":
             cnh = input("Inserir documento (CNH): ")
-            ## menu_inicial = inquirer.prompt(menu)    Inciar Menu Inicial
+        
         if documentacao_motorista['Motorista'] == "Editar Documento":
             cnh = get_cnh()
             print('Esta é sua CNH Atual: ', cnh)
             cnh = input("Inserir documento (CNH): ")
-            ## menu_inicial = inquirer.prompt(menu)    Inciar Menu Inicial
+        
         if documentacao_motorista["Motorista"] == "Visualizar Documento":
             cnh = get_cnh()
             print("Esta é sua CNH Atual: ", cnh)
-            ## menu_inicial = inquirer.prompt(menu)    Inciar Menu Inicial
+        
 
 
     if documentacao['Documentação'] == "Veículo":
@@ -52,18 +52,18 @@ while menu_motorista == 6:
 
         if documentacao_veiculo["Veículo"] == "Inserir Documento do Veículo":
             doc_veiculo = input("Inserir documento (Veículo): ")
-            ## menu_inicial = inquirer.prompt(menu)    Inciar Menu Inicial
+        
 
         if documentacao_veiculo["Veículo"] == "Editar Documento":
             doc_veiculo = get_doc_veiculo()
             print('Este é o Documento Atual do Veículo: ', doc_veiculo)
             doc_veiculo = input("Inserir documento (Veículo): ")
-            ## menu_inicial = inquirer.prompt(menu)    Inciar Menu Inicial
+        
 
         if documentacao_veiculo["Veículo"] == "Visualizar Documento":
             doc_veiculo = get_doc_veiculo()
             print('Este é o Documento Atual do Veículo: ', doc_veiculo)
-            ## menu_inicial = inquirer.prompt(menu)    Inciar Menu Inicial
+        
 
     #else:
         #voltar ao menu inicial

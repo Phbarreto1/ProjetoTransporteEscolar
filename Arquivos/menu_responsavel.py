@@ -37,6 +37,3 @@ elif menu_responsavel['Menu Responsável'] == 'Ajuda':
 
 elif menu_responsavel['Menu Responsável'] == 'Sair':
     print("Saindo...")
-
-else:
-    print('Número Inválido')
