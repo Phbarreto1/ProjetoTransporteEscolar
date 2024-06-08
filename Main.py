@@ -350,7 +350,7 @@ def menu_responsavel():
                 filhos = receber_filhos()
                 qtd_filhos = len(filhos)
 
-                if qtd_filhos >1:
+                if qtd_filhos > 1:
                     filho = [
                             inquirer.List('Filho',
                                         message = "Selecionar qual o filho",
@@ -362,8 +362,7 @@ def menu_responsavel():
                     print("Filho para ausencia: ", filho_ausencia['Filho'])
                     print("Turno: ", turno_ausencia["Ausências"])
 
-            if voltar_ao_menu():
-                break
+            voltar_ao_menu()
 
         elif menu_responsavel['Menu Responsável'] == 'Acessar GPS':
             pergunta_acesso_gps = [
@@ -376,9 +375,9 @@ def menu_responsavel():
 
             if resposta_acesso_gps ['Perguntas Acesso GPS'] == 'Sim':
                 print('>>> Visualizando localização em tempo real do veículo <<<')
-
-            if voltar_ao_menu():
-                break
+                voltar_ao_menu()
+            else:
+                voltar_ao_menu()
 
         elif menu_responsavel['Menu Responsável'] == 'Histórico de Rotas':
             while True:
@@ -388,14 +387,16 @@ def menu_responsavel():
                     try:
                         historico_rota = date.fromisoformat(historico_de_rotas_str)
                         print(f'Visualizando a rota do GPS no dia: {historico_rota}')
+                        if historico == 'S':
+                            historico_de_rotas_str = input('Escolha a data da rota que deseja visualizar (AAAA-MM-DD):\n')
+                            historico_rota = date.fromisoformat(historico_de_rotas_str)
+                            print(f'\nVisualizando a rota do GPS no dia: {historico_rota}...\n')
+                        else:
+                            voltar_ao_menu()
                     except ValueError:
-                        print('Data inválida. Digite no formato AAAA-MM-DD')
+                        print('Data inválida. Digite no formato AAAA-MM-DD')                
                 else:
-                    break
-
-                
-                if voltar_ao_menu():
-                    break
+                    voltar_ao_menu()
 
         elif menu_responsavel['Menu Responsável'] == 'Notificações e Comunicação':
             print("Visualizando chat com o motorista...")
@@ -414,9 +415,10 @@ def menu_responsavel():
             if resposta_chat['Enviar Mensagem'] == 'Sim':
                 mensagem_personalizada = input('Escreva a mensagem que deseja enviar: ')
                 print(f'Mensagem enviada: "{mensagem_personalizada}"')
+                voltar_ao_menu()
 
-            if voltar_ao_menu():
-                break
+            else:
+                voltar_ao_menu()
 
         elif menu_responsavel['Menu Responsável'] == 'Controle de Pagamentos':
             while True:
@@ -431,13 +433,16 @@ def menu_responsavel():
                 if resposta_pagamento['Pagamentos Menu Responsável'] == 'Baixar Boleto':
                     print('Baixando boleto...')
                     print('boleto_mensalidade.pdf')
+                    voltar_ao_menu()
                 elif resposta_pagamento['Pagamentos Menu Responsável'] == 'Alterar data de vencimento':
                     data_vencimento = int(input('Gostaria de alterar o vencimento para o dia 05, 10, 15, 20 ou 25?\n'))
                     print(f'Vencimento alterado para o dia {data_vencimento}!')
+                    voltar_ao_menu()
                 elif resposta_pagamento['Pagamentos Menu Responsável'] == 'Suporte':
                     suporte_pagamentos_responsavel = input('Envie para nós o seu problema que iremos entrar em contato para resolvê-lo.\n')
-                elif resposta_pagamento['Pagamentos Menu Responsável'] == 'Voltar ao menu':
-                    break
+                    voltar_ao_menu()
+                else:
+                    voltar_ao_menu()
 
         elif menu_responsavel['Menu Responsável'] == 'Documentação':
             perguntas_documentacao_responsavel = [
