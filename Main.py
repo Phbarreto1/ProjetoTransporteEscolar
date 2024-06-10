@@ -466,12 +466,12 @@ def menu_responsavel():
             pergunta_cadastrar_passageiros = [
                     inquirer.List('SubMenu Cadastro de Passageiros',
                                 message = "Escolha a opção",  
-                                choices = ['Novo cadastro', 'Editar cadastro', 'Voltar ao menu']  
+                                choices = ['Novo cadastro', 'Editar cadastro', 'Voltar ao menu'], 
                                 ),
             ]
             resposta_cadastrar_passageiros = inquirer.prompt(pergunta_cadastrar_passageiros)
 
-            if resposta_cadastrar_passageiros['Submenu Cadastro de Passageiros'] == 'Novo cadastro':
+            if resposta_cadastrar_passageiros['SubMenu Cadastro de Passageiros'] == 'Novo cadastro':
                 cadastrar_passageiro(BD_alunos, num_aluno)
                 voltar_ao_menu()
             elif resposta_cadastrar_passageiros['SubMenu Cadastro de Passageiros'] == 'Editar cadastro':
