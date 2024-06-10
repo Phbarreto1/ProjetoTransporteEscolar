@@ -6,7 +6,7 @@ from datetime import date
 os.system("clear")
 
 usuarios_sistema = 'usuarios.json'
-lista_mensagens_enviadas = [] # armazenar as notificações enviadas pelo motorista
+lista_mensagens_enviadas = [] # Armazenar as notificações enviadas pelo motorista
 passageiros = []
 num_aluno = 0
 BD_alunos = {}
@@ -28,7 +28,7 @@ def cadastrar_passageiro(BD_alunos, num_aluno):
     data_nasc_aluno = input('Digite sua data de nascimento (AAAA-MM-DD):\n')
     while True:
         try:
-            nascimento_aluno = date.fromisoformat(data_nasc_aluno)
+            nascimento_aluno = date.fromisoformat(data_nasc_aluno) # Usando o método de "fromisoformat()" para converter a string do nascimento em uma variável da classe "date"
             break
         except ValueError:
             print('Data de nascimento inválida. Digite a data no formato AAAA-MM-DD.')
@@ -44,7 +44,7 @@ def cadastrar_passageiro(BD_alunos, num_aluno):
                     choices = ['Manhã', 'Tarde', 'Noite']  
                     ),
     ]
-    turno_escolhido = inquirer.prompt(turno)['Turno']
+    turno_escolhido = inquirer.prompt(turno)
 
     num_aluno = len(passageiros) + 1
     passageiro = {'nome': nome_aluno, 'nascimento': data_nasc_aluno, 'codigo': num_aluno, 'turno': turno_escolhido}
@@ -153,9 +153,9 @@ def menu_motorista():
             while True:
                 mensagens_motorista = [
                         inquirer.List('Mensagens Motorista',
-                                    message = "Escolha a opção:",
+                                    message = "Escolha a opção",
                                     choices = ['Chegando em 10 minutos', 'Chegando em 5 minutos', 'Estou aqui', 'O aluno foi entregue à escola', 'O aluno está voltando para casa',
-                                               'Houve um problema com o transporte', 'Personalizar mensagem', '']    
+                                               'Houve um problema com o transporte', 'Personalizar mensagem']    
                                     ),                   
                 ]
                 mensagem = inquirer.prompt(mensagens_motorista)
@@ -285,7 +285,7 @@ def menu_motorista():
         elif menu_motorista['Menu Motorista'] == 'Ajuda':
             perguntas_menu_ajuda_motorista = [
                     inquirer.List('Menu Ajuda',
-                                message = "Escolha a opção:",
+                                message = "Escolha a opção",
                                 choices = ['Sobre o menu', 'Denúncia', 'Falar com o suporte', 'Voltar ao menu'],  
                                 ),
             ]
@@ -325,7 +325,7 @@ def menu_responsavel():
     while True:
         perguntas_menu_responsavel = [
                 inquirer.List('Menu Responsável',
-                            message = "Escolha a opção:",
+                            message = "Escolha a opção",
                             choices = ['Marcar Ausência', 'Acessar GPS', 'Histórico de Rotas', 'Notificações e Comunicação','Controle de Pagamentos', 'Documentação', 'Cadastro de Passageiros', 'Ajuda', 'Sair'],
                             ),
         ]       
@@ -465,7 +465,7 @@ def menu_responsavel():
         elif menu_responsavel['Menu Responsável'] == 'Cadastro de Passageiros':
             pergunta_cadastrar_passageiros = [
                     inquirer.List('SubMenu Cadastro de Passageiros',
-                                message = "Escolha a opção:",  
+                                message = "Escolha a opção",  
                                 choices = ['Novo cadastro', 'Editar cadastro', 'Voltar ao menu']  
                                 ),
             ]
@@ -483,7 +483,7 @@ def menu_responsavel():
         elif menu_responsavel['Menu Responsável'] == 'Ajuda':
             perguntas_menu_ajuda_responsavel = [
                     inquirer.List('Menu Ajuda',
-                                message = "Escolha a opção:",
+                                message = "Escolha a opção",
                                 choices = ['Sobre o menu', 'Denúncia', 'Falar com o suporte', 'Voltar ao menu'],  
                                 ),
             ]
@@ -528,7 +528,7 @@ def login():
 
     usuarios = carregar_usuarios()
     if cpf_login in usuarios and usuarios[cpf_login]['senha'] == senha_login:
-        print('Login com sucesso!')
+        print('\nLogin com sucesso!\n')
         print(f'Bem-vindo(a), {usuarios[cpf_login]['nome']}!')
         if usuarios[cpf_login]['tipo'] == 'motorista':
                 menu_motorista()
@@ -556,7 +556,7 @@ if resposta_login['Tela Inicial'] == 'Não, seguir para o Cadastro':
     cadastrar_usuario_novo = [
         inquirer.List('Cadastrar',
                     message = "Escolha uma das opções para se cadastrar",
-                    choices =['Motorista', 'Passageiro'] 
+                    choices = ['Motorista', 'Passageiro'] 
                     ),        
     ]
     cadastrar = inquirer.prompt(cadastrar_usuario_novo)
