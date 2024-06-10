@@ -199,11 +199,11 @@ def menu_motorista():
                             historico_de_rotas_str = input('Escolha a data da rota que deseja visualizar (AAAA-MM-DD):\n')
                             historico_rota = date.fromisoformat(historico_de_rotas_str)
                             print(f'\nVisualizando a rota do GPS no dia: {historico_rota}...\n')
-                        else:
                             voltar_ao_menu()
+                        else:
+                            break
                     else:
-                        break
-            voltar_ao_menu()
+                        voltar_ao_menu()
             
         elif menu_motorista['Menu Motorista'] == 'Controle de Pagamentos':
             while True:
