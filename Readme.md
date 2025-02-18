@@ -13,5 +13,5 @@ O sistema foi desenvolvido com base nas dificuldades enfrentadas diariamente por
 
 ## Tecnologias Utilizadas
 
-- **Python**: Linguagem principal utilizada para o desenvolvimento da aplicação.
-- **JSON**: Formato de armazenamento dos dados dos usuários.
+• **Python**: Linguagem principal utilizada para o desenvolvimento da aplicação;  
+• **JSON**: Formato de armazenamento dos dados dos usuários.
